@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      POSTGRES_USER: startgg
+      POSTGRES_PASSWORD: x123456
+      POSTGRES_DB: startggdb
+    ports:
+      - "5432:5432"
