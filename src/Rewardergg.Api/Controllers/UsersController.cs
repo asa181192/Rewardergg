@@ -19,7 +19,7 @@ namespace Rewardergg.Api.Controllers
         public async Task<IActionResult> Create(CreateUserCommand command)
         {
             var userId = await _mediator.Send(command);
-            return Ok(); ;
+            return Ok(userId); ;
         }
 
     }
