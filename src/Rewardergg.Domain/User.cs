@@ -24,7 +24,5 @@ namespace Rewardergg.Domain
         public ICollection<EventUser>? EventParticipations { get; set; }
 
         public ICollection<string>? Roles { get; set; }
-
-        public string test { get; set; }
     }
 }

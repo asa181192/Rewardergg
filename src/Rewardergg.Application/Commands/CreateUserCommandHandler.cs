@@ -1,21 +1,16 @@
 ﻿using MediatR;
 using Rewardergg.Application.Interfaces;
 using Rewardergg.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rewardergg.Application.Commands
 {
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Guid>
     {
-        private readonly IGenericRepository<User> _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public CreateUserCommandHandler(IGenericRepository<User> userRepository)
+        public CreateUserCommandHandler(IUnitOfWork unitOfWork)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Guid> Handle(CreateUserCommand request, CancellationToken cancellationToken)
@@ -27,7 +22,8 @@ namespace Rewardergg.Application.Commands
                 Points = 0
             };
 
-            await _userRepository.AddAsync(user);
+            await _unitOfWork.Users.AddAsync(user);
+            await _unitOfWork.CommitAsync(cancellationToken);
 
             return user.Id;
         }
