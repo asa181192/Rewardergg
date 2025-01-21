@@ -1,6 +1,9 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Rewardergg.Application.Commands;
+using Rewardergg.Application.Interfaces;
+using Rewardergg.Infrastructure.Auth;
 using Rewardergg.Infrastructure.Extensions;
 using Rewardergg.Infrastructure.Persitence;
 using System.Reflection;
@@ -12,7 +15,7 @@ namespace Rewardergg.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-                       
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -27,10 +30,17 @@ namespace Rewardergg.Api
             // Add services to the container.         
             builder.Services.AddMediatR(cfg =>
                                             cfg.RegisterServicesFromAssemblies(
-                                                Assembly.GetExecutingAssembly(),                      
-                                                typeof(CreateUserCommandHandler).Assembly             
+                                                Assembly.GetExecutingAssembly(),
+                                                typeof(CreateUserCommandHandler).Assembly
                                             )
-);
+                                        );
+
+            builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
+            {
+                var baseUrl = builder.Configuration["Startgg:BaseUrl"] ?? throw new MissingFieldException("Missing startgg BaseUrl property");
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
 
             var app = builder.Build();
 
