@@ -1,7 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Rewardergg.Application.DTOs;
 using Rewardergg.Application.Interfaces;
+using Rewardergg.Application.Models;
+using Rewardergg.Domain;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace Rewardergg.Infrastructure.Auth
@@ -9,15 +16,19 @@ namespace Rewardergg.Infrastructure.Auth
     public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private string _grantType = "authorization_code";
         private string _scope = "user.identity user.email";
         private readonly string _oauthEndpoint = "/oauth/access_token";
+        private readonly JwtSettings _jwtSettings;
 
-        public AuthService(HttpClient httpClient, IConfiguration configuration)
+        public AuthService(HttpClient httpClient, IConfiguration configuration, IOptions<JwtSettings> jwtSettings, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
             _configuration = configuration;
+            _jwtSettings = jwtSettings.Value;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<OauthResponseDto> AuthenticateWithOauth(string code)
@@ -48,9 +59,44 @@ namespace Rewardergg.Infrastructure.Auth
 
         }
 
-        public Task CreateUserToken()
+        public string CreateUserToken(User user)
         {
-            throw new NotImplementedException();
+            var claims = new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Email,user.Email!),
+                    new Claim("gamerTag", user.GamerTag!),
+                    new Claim("discriminator", user.Discriminator!)
+                };
+
+
+            foreach (var role in user.Roles!)
+            {
+                var claim = new Claim(ClaimTypes.Role, role);
+                claims.Add(claim);
+            }
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key!));
+            var credenciales = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+            var tokenDescription = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(claims),
+                Expires = DateTime.UtcNow.Add(_jwtSettings.ExpireTime),
+                SigningCredentials = credenciales
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescription);
+            return tokenHandler.WriteToken(token);
+        }
+
+        public string GetSessionUser()
+        {
+            var username = _httpContextAccessor.HttpContext!.User?.Claims?
+                    .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            return username!;
         }
     }
 }

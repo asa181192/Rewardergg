@@ -26,6 +26,8 @@ namespace Rewardergg.Application.Commands
             await _unitOfWork.CommitAsync(cancellationToken);
 
             return user.Id;
+
+            
         }
     }
 }

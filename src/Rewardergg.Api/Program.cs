@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Rewardergg.Application.Commands;
 using Rewardergg.Application.Interfaces;
+using Rewardergg.Application.Models;
 using Rewardergg.Infrastructure.Auth;
 using Rewardergg.Infrastructure.Extensions;
 using Rewardergg.Infrastructure.Persitence;
@@ -41,6 +42,10 @@ namespace Rewardergg.Api
                 client.BaseAddress = new Uri(baseUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
+
+            // Jwt config 
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
             var app = builder.Build();
 

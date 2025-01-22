@@ -21,6 +21,7 @@ namespace Rewardergg.Api.Controllers
             var token = await _authService.AuthenticateWithOauth(code);
 
             return Ok(token);
+
         }
     }
 }

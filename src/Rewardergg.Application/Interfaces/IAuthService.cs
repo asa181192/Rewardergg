@@ -1,4 +1,5 @@
 ﻿using Rewardergg.Application.DTOs;
+using Rewardergg.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,8 @@ namespace Rewardergg.Application.Interfaces
     {
         Task<OauthResponseDto> AuthenticateWithOauth(string code);
 
-        Task CreateUserToken();
+        public string CreateUserToken(User user);
+
+        public string GetSessionUser();
     }
 }
