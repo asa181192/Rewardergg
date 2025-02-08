@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
+using Rewardergg.Application.Configurations;
 using Rewardergg.Application.DTOs;
 using Rewardergg.Application.Interfaces;
 using Rewardergg.Application.Models;
@@ -15,7 +15,7 @@ namespace Rewardergg.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IConfiguration _configuration;
+        private readonly StartggSettings _startggSettings;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly HttpClient _httpClient;
         private string _grantType = "authorization_code";
@@ -23,11 +23,11 @@ namespace Rewardergg.Infrastructure.Services
         private readonly string _oauthEndpoint = "/oauth/access_token";
         private readonly JwtSettings _jwtSettings;
 
-        public AuthService(HttpClient httpClient, IConfiguration configuration, IOptions<JwtSettings> jwtSettings, IHttpContextAccessor httpContextAccessor)
+        public AuthService(HttpClient httpClient, IOptionsMonitor<StartggSettings> startggSettings, IOptionsMonitor<JwtSettings> jwtSettings, IHttpContextAccessor httpContextAccessor)
         {
             _httpClient = httpClient;
-            _configuration = configuration;
-            _jwtSettings = jwtSettings.Value;
+            _startggSettings = startggSettings.CurrentValue;
+            _jwtSettings = jwtSettings.CurrentValue;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -36,11 +36,11 @@ namespace Rewardergg.Infrastructure.Services
             var postData = new
             {
                 grant_type = _grantType,
-                client_secret = _configuration["Startgg:ClientSecret"],
+                client_secret = _startggSettings.ClientSecret,
                 code,
                 scope = _scope,
-                client_id = _configuration["Startgg:ClientId"],
-                redirect_uri = _configuration["Startgg:RedirectUrl"]
+                client_id = _startggSettings.ClientId,
+                redirect_uri = _startggSettings.RedirectUrl
             };
 
             var json = JsonConvert.SerializeObject(postData);

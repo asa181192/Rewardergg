@@ -1,6 +1,10 @@
+﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Rewardergg.Api.Extensions;
+using Rewardergg.Application.Configurations;
 using Rewardergg.Application.Interfaces;
 using Rewardergg.Application.Models;
+using Rewardergg.Application.Validators;
 using Rewardergg.Infrastructure.Extensions;
 using Rewardergg.Infrastructure.Persitence;
 using Rewardergg.Infrastructure.Services;
@@ -25,14 +29,24 @@ namespace Rewardergg.Api
 
             builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
             {
-                var baseUrl = builder.Configuration["Startgg:BaseUrl"] ?? throw new MissingFieldException("Missing startgg BaseUrl property");
+                var baseUrl = builder.Configuration["StartggSettings:BaseUrl"] ?? throw new MissingFieldException("Missing startgg BaseUrl property");
                 client.BaseAddress = new Uri(baseUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
 
+            // Add FluentValidation Validators
+            builder.Services.AddSingleton<IValidator<StartggSettings>, StartggSettingsValidator>();
+            builder.Services.AddSingleton<IValidator<JwtSettings>, JwtSettingsValidator>();
+
+            // Bind Configuration & Validate on Startup
+            builder.Services.AddOptions<StartggSettings>().BindConfiguration(nameof(StartggSettings))
+                    .ValidateFluentValidation().ValidateOnStart();
+            builder.Services.AddOptions<JwtSettings>().BindConfiguration(nameof(JwtSettings))
+                    .ValidateFluentValidation().ValidateOnStart();
+
             // Jwt config 
             builder.Services.AddHttpContextAccessor();
-            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
             var app = builder.Build();
 
