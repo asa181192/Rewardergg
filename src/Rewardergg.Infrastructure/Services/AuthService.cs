@@ -11,7 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Rewardergg.Infrastructure.Auth
+namespace Rewardergg.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
@@ -50,7 +50,7 @@ namespace Rewardergg.Infrastructure.Auth
             if (!response.IsSuccessStatusCode)
             {
                 var error = await response.Content.ReadAsStringAsync();
-                throw new HttpRequestException($"Error {response.StatusCode}: {error}");
+                throw new HttpRequestException($"Failed to authenticate {response.StatusCode}: {error}");
             }
 
             var responseString = await response.Content.ReadAsStringAsync();

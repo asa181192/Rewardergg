@@ -13,6 +13,7 @@ namespace Rewardergg.Domain
 
         public string? Discriminator { get; set; }
 
+        // Todo- Remove this property
         public string? DiscordId { get; set; }
 
         public int Points { get; set; }

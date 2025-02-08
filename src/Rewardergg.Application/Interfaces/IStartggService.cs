@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Rewardergg.Application.GraphQlEntities;
 
 namespace Rewardergg.Application.Interfaces
 {
     public interface IStartggService
     {
+        Task<Data> GetPlayerAccountData(string bearerToken);
     }
 }

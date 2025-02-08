@@ -7,21 +7,20 @@ namespace Rewardergg.Api.Controllers
     [Route("~/api/v1/login")]
     public class LoginController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthWorkflowService _authWorkflowService;
 
-        public LoginController(IAuthService authService)
+        public LoginController(IAuthWorkflowService authWorkflowService)
         {
-            _authService = authService;
+            _authWorkflowService = authWorkflowService;
         }
 
         [HttpGet]
         [Route("oauth")]
-        public async Task<IActionResult> OauthLogin(string code)
+        public async Task<IActionResult> OauthLogin(string code, CancellationToken cancellationToken)
         {
-            var token = await _authService.AuthenticateWithOauth(code);
+            var jwt = await _authWorkflowService.LoginAsync(code, cancellationToken);
 
-            return Ok(token);
-
+            return Ok(jwt);
         }
     }
 }

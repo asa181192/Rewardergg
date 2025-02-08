@@ -1,14 +1,9 @@
-using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Rewardergg.Application.Commands;
 using Rewardergg.Application.Interfaces;
 using Rewardergg.Application.Models;
-using Rewardergg.Infrastructure.Auth;
 using Rewardergg.Infrastructure.Extensions;
 using Rewardergg.Infrastructure.Persitence;
-using System.Reflection;
-
+using Rewardergg.Infrastructure.Services;
 namespace Rewardergg.Api
 {
     public class Program
@@ -27,14 +22,6 @@ namespace Rewardergg.Api
             // Database registration
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-            // Add services to the container.         
-            builder.Services.AddMediatR(cfg =>
-                                            cfg.RegisterServicesFromAssemblies(
-                                                Assembly.GetExecutingAssembly(),
-                                                typeof(CreateUserCommandHandler).Assembly
-                                            )
-                                        );
 
             builder.Services.AddHttpClient<IAuthService, AuthService>(client =>
             {
