@@ -77,7 +77,7 @@ namespace Rewardergg.Infrastructure.Services
             }
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key!));
-            var credenciales = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+            var credenciales = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var tokenDescription = new SecurityTokenDescriptor
             {

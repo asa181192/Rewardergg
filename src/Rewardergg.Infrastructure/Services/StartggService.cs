@@ -2,31 +2,28 @@
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using Rewardergg.Application.Configurations;
 using Rewardergg.Application.GraphQlEntities;
 using Rewardergg.Application.GraphQlQueries;
 using Rewardergg.Application.Interfaces;
-using System.Buffers.Text;
 using System.Net.Http.Headers;
 
 namespace Rewardergg.Infrastructure.Services
 {
     public class StartggService : IStartggService
     {
-        private readonly IConfiguration _configuration;
-        private string _baseUrl;
-        private string _graphQlEndpoint;
+        private readonly StartggSettings _startggSettings;
 
-        public StartggService(IConfiguration configuration)
+        public StartggService(IOptionsMonitor<StartggSettings> startggSettings)
         {
-            _configuration = configuration;
-            _baseUrl = _configuration["Startgg:BaseUrl"]!;
-            _graphQlEndpoint = _configuration["Startgg:GraphQlEndpoint"]!;
+            _startggSettings = startggSettings.CurrentValue;
         }
 
         public async Task<Data> GetPlayerAccountData(string bearerToken)
         {
 
-            var graphQLClient = new GraphQLHttpClient(_baseUrl + _graphQlEndpoint, new NewtonsoftJsonSerializer());
+            var graphQLClient = new GraphQLHttpClient(_startggSettings.BaseUrl + _startggSettings.GraphQlEndpoint, new NewtonsoftJsonSerializer());
 
             graphQLClient.HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
 
@@ -45,7 +42,7 @@ namespace Rewardergg.Infrastructure.Services
                 throw new Exception("Error getting player account data from startgg service");
             }
             
-            return response.Data;
+            return response.Data ?? throw new Exception("Data from Player Account is null");
         }
     }
 }

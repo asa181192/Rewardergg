@@ -25,7 +25,6 @@ namespace Rewardergg.Application.GraphQlQueries
                   prefix
                 }
               }
-            }
-            @"; 
+            }"; 
     }
 }

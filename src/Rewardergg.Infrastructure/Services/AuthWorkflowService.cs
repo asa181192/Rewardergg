@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Rewardergg.Application.Interfaces;
 using Rewardergg.Domain;
 using Rewardergg.Domain.Enums;
@@ -11,13 +12,14 @@ namespace Rewardergg.Application.Services
         private AppDbContext _appDbContext;
         private IAuthService _authService;
         private IStartggService _startggService;
+        private ILogger<AuthWorkflowService> _logger;
 
-        public AuthWorkflowService(IAuthService authService, AppDbContext appDbContext, IStartggService startggService)
+        public AuthWorkflowService(IAuthService authService, AppDbContext appDbContext, IStartggService startggService, ILogger<AuthWorkflowService> logger)
         {
             _authService = authService;
             _appDbContext = appDbContext;
             _startggService = startggService;
-
+            _logger = logger;
         }
 
         public async Task<string> LoginAsync(string code, CancellationToken cancellationToken)
@@ -25,11 +27,13 @@ namespace Rewardergg.Application.Services
             // Step 1: Authenticate with OAuth
             var oauthResponse = await _authService.AuthenticateWithOauth(code);
 
-            if (string.IsNullOrEmpty(oauthResponse?.AccessToken) || string.IsNullOrEmpty(oauthResponse?.RefreshToken))
+            _logger.LogInformation("Oauth response {oauthResponse}", oauthResponse.ToString());
+
+            if (string.IsNullOrEmpty(oauthResponse?.access_token) || string.IsNullOrEmpty(oauthResponse?.refresh_token))
                 throw new Exception("OAuth authentication failed. Tokens are missing.");
 
             // Step 2: Fetch user data from Start.gg
-            var accountData = await _startggService.GetPlayerAccountData(oauthResponse.AccessToken);
+            var accountData = await _startggService.GetPlayerAccountData(oauthResponse.access_token);
 
             if (accountData?.currentUser?.discriminator == null)
                 throw new Exception("Start.gg user data is incomplete.");
@@ -68,11 +72,9 @@ namespace Rewardergg.Application.Services
             var token = new UserToken
             {
                 UserId = user.Id,
-                AccessToken = oauthResponse.AccessToken,
-                CreatedAt = oauthResponse.CreatedAt,
-                ExpiresAt = oauthResponse.ExpiresAt,
-                RefreshToken = oauthResponse.RefreshToken
-
+                AccessToken = oauthResponse.access_token,
+                ExpiresAt = oauthResponse.expires_in,
+                RefreshToken = oauthResponse.refresh_token
             };
             await _appDbContext.UserToken.AddAsync(token, cancellationToken);
 
