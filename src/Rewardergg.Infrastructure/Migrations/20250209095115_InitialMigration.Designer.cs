@@ -12,7 +12,7 @@ using Rewardergg.Infrastructure.Persitence;
 namespace Rewardergg.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250113075150_InitialMigration")]
+    [Migration("20250209095115_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -183,9 +183,6 @@ namespace Rewardergg.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<string>("DiscordId")
-                        .HasColumnType("text");
-
                     b.Property<string>("Discriminator")
                         .HasColumnType("text");
 
@@ -222,11 +219,11 @@ namespace Rewardergg.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("CreatedAt")
+                        .HasColumnType("integer");
 
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<int>("ExpiresAt")
+                        .HasColumnType("integer");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()

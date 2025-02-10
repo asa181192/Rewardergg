@@ -49,7 +49,6 @@ namespace Rewardergg.Infrastructure.Migrations
                     Email = table.Column<string>(type: "text", nullable: true),
                     GamerTag = table.Column<string>(type: "text", nullable: true),
                     Discriminator = table.Column<string>(type: "text", nullable: true),
-                    DiscordId = table.Column<string>(type: "text", nullable: true),
                     Points = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
                     Roles = table.Column<string>(type: "text", nullable: true)
@@ -110,8 +109,8 @@ namespace Rewardergg.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     AccessToken = table.Column<string>(type: "text", nullable: false),
                     RefreshToken = table.Column<string>(type: "text", nullable: false),
-                    ExpiresAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                    ExpiresAt = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

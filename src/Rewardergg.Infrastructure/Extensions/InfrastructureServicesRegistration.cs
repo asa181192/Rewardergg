@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rewardergg.Application.Interfaces;
-using Rewardergg.Infrastructure.Repositories;
+using Rewardergg.Application.Services;
+using Rewardergg.Infrastructure.Services;
 
 namespace Rewardergg.Infrastructure.Extensions
 {
@@ -10,8 +11,8 @@ namespace Rewardergg.Infrastructure.Extensions
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
                                                                IConfiguration configuration)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddScoped<IStartggService, StartggService>();
+            services.AddScoped<IAuthWorkflowService, AuthWorkflowService>();
 
             return services;
         }

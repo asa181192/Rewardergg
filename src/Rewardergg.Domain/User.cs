@@ -13,8 +13,6 @@ namespace Rewardergg.Domain
 
         public string? Discriminator { get; set; }
 
-        public string? DiscordId { get; set; }
-
         public int Points { get; set; }
 
         public bool IsActive { get; set; }
