@@ -13,6 +13,7 @@ namespace Rewardergg.Infrastructure.Extensions
         {
             services.AddScoped<IStartggService, StartggService>();
             services.AddScoped<IAuthWorkflowService, AuthWorkflowService>();
+            services.AddScoped<ITournamentService, TournamentService>();
 
             return services;
         }

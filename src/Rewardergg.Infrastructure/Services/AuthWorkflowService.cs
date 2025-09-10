@@ -27,8 +27,6 @@ namespace Rewardergg.Application.Services
             // Step 1: Authenticate with OAuth
             var oauthResponse = await _authService.AuthenticateWithOauth(code);
 
-            _logger.LogInformation("Oauth response {oauthResponse}", oauthResponse.ToString());
-
             if (string.IsNullOrEmpty(oauthResponse?.access_token) || string.IsNullOrEmpty(oauthResponse?.refresh_token))
                 throw new Exception("OAuth authentication failed. Tokens are missing.");
 
@@ -51,7 +49,6 @@ namespace Rewardergg.Application.Services
                     GamerTag = accountData.currentUser.player?.gamerTag,
                     Discriminator = accountData.currentUser.discriminator,
                     IsActive = true,
-                    Roles = new List<string>() { AppRole.Participant.ToString() },
                     Points = 0
 
                 };
