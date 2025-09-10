@@ -18,6 +18,7 @@ namespace Rewardergg.Api.Controllers
         [Route("oauth")]
         public async Task<IActionResult> OauthLogin(string code, CancellationToken cancellationToken)
         {
+ 
             var jwt = await _authWorkflowService.LoginAsync(code, cancellationToken);
 
             return Ok(jwt);
