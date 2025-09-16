@@ -19,9 +19,6 @@ namespace Rewardergg.Application.Validators
 
             RuleFor(x => x.DurationInMinutes)
                 .GreaterThan(0).WithMessage("DurationInMinutes must be greater than zero.");
-
-            RuleFor(x => x.ExpireTime)
-                .GreaterThan(TimeSpan.Zero).WithMessage("ExpireTime must be a positive time span.");
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace Rewardergg.Application.GraphQlEntities
+﻿
+namespace Rewardergg.Application.GraphQlEntities
 {
-    public class Currentuser
+    public class CurrentUser
     {
         public int id { get; set; }
 

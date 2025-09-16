@@ -10,7 +10,9 @@ namespace Rewardergg.Application.Interfaces
 {
     public interface IAuthService
     {
-        Task<OauthResponseDto> AuthenticateWithOauth(string code);
+        Task<OauthResponseDto> GetTokenWithAuthorizationCodeAsync(string code, bool isRefresh = false);
+
+        public DateTime GetJwtExpirationTime();
 
         public string CreateUserToken(User user);
 

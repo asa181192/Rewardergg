@@ -10,6 +10,5 @@
 
         public required double DurationInMinutes { get; set; }
 
-        public required TimeSpan ExpireTime { get; set; }
     }
 }

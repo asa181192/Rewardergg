@@ -1,7 +1,13 @@
-﻿namespace Rewardergg.Application.GraphQlEntities
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rewardergg.Application.GraphQlEntities
 {
     public class Data
     {
-        public Currentuser? currentUser { get; set; }
+        public CurrentUser data { get; set; }
     }
 }

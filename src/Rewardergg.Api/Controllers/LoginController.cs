@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.Mvc;
 using Rewardergg.Application.Interfaces;
 
 namespace Rewardergg.Api.Controllers
@@ -14,11 +15,20 @@ namespace Rewardergg.Api.Controllers
             _authWorkflowService = authWorkflowService;
         }
 
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshRequest request, CancellationToken cancellationToken)
+        {
+            var jwt = await _authWorkflowService.RefreshTokenAsync(request.RefreshToken, cancellationToken);
+            if (jwt == null)
+                return Unauthorized("Invalid token.");
+
+            return Ok(jwt);
+        }
+
         [HttpGet]
         [Route("oauth")]
         public async Task<IActionResult> OauthLogin(string code, CancellationToken cancellationToken)
-        {
- 
+        { 
             var jwt = await _authWorkflowService.LoginAsync(code, cancellationToken);
 
             return Ok(jwt);

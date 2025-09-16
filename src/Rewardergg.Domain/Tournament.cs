@@ -12,8 +12,12 @@ namespace Rewardergg.Domain
 
         public string? Category { get; set; }
 
+        public string? Slug { get; set; } 
+
         public bool IsFinished { get; set; }
 
-        public ICollection<Event>? Events { get; set; }
+        public ICollection<Event>? Events { get; set; } = new List<Event>();
+
+
     }
 }

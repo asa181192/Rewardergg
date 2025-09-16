@@ -22,6 +22,7 @@ namespace Rewardergg.Infrastructure.Persitence
         public DbSet<Event> Events { get; set; }
         public DbSet<EventUser> EventParticipants { get; set; }
         public DbSet<MatchResult> MatchResults { get; set; }
+        public DbSet<UserEnrollment> UserEnrollments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

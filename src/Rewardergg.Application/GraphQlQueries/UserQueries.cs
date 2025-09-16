@@ -8,6 +8,24 @@ namespace Rewardergg.Application.GraphQlQueries
 {
     public class UserQueries
     {
+        public static string EntrantStanding { get; } = @"
+            query EntrantStanding($eventId: ID!, $userId: ID!) {
+              event(id: $eventId) {
+                tournament {
+                  name
+                  id
+                }
+                userEntrant(userId: $userId) {
+                  id
+                  name
+                  isDisqualified
+                  standing {
+                    isFinal
+                    placement
+                  }
+                }
+              }
+            }";
         public static string PlayerAccountData { get; } = @"
             query PlayerData {
               currentUser {

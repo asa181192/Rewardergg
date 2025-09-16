@@ -13,6 +13,8 @@ namespace Rewardergg.Domain
 
         public string? Discriminator { get; set; }
 
+        public int UserId { get; set; }
+
         public int Points { get; set; }
 
         public bool IsActive { get; set; }
@@ -21,6 +23,8 @@ namespace Rewardergg.Domain
 
         public ICollection<EventUser>? EventParticipations { get; set; }
 
-        public ICollection<string>? Roles { get; set; }
+        public ICollection<string>? Roles { get; set; } = new List<string>();
+
+        public DateTime? LastSyncedAt { get; set; }
     }
 }

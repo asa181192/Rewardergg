@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Rewardergg.Application.Interfaces;
+using Rewardergg.Application.Mappers;
 using Rewardergg.Application.Services;
 using Rewardergg.Infrastructure.Services;
 
@@ -14,6 +15,7 @@ namespace Rewardergg.Infrastructure.Extensions
             services.AddScoped<IStartggService, StartggService>();
             services.AddScoped<IAuthWorkflowService, AuthWorkflowService>();
             services.AddScoped<ITournamentService, TournamentService>();
+            services.AddAutoMapper(typeof(MappingProfile)); 
 
             return services;
         }

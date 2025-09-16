@@ -1,9 +1,11 @@
-﻿using Rewardergg.Application.GraphQlEntities;
+﻿using Rewardergg.Application.DTOs;
+using Rewardergg.Application.GraphQlEntities.Results;
 
 namespace Rewardergg.Application.Interfaces
 {
     public interface IStartggService
     {
-        Task<Data> GetPlayerAccountData(string bearerToken);
+        Task<CurrentUserResult> GetPlayerAccountData(string bearerToken, CancellationToken cancellationToken);
+        Task<EntrantStandingResult?> GetEntrantStandingAsync(string accessToken, string eventId, int userId, CancellationToken cancellationToken);
     }
 }

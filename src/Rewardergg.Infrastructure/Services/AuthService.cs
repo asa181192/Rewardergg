@@ -8,6 +8,8 @@ using Rewardergg.Application.Interfaces;
 using Rewardergg.Application.Models;
 using Rewardergg.Domain;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 
@@ -21,7 +23,9 @@ namespace Rewardergg.Infrastructure.Services
         private string _grantType = "authorization_code";
         private string _scope = "user.identity user.email";
         private readonly string _oauthEndpoint = "/oauth/access_token";
+        private readonly string _oauthRefreshEndpoint = "/oauth/refresh";
         private readonly JwtSettings _jwtSettings;
+        private DateTime expirationTime ;
 
         public AuthService(HttpClient httpClient, IOptionsMonitor<StartggSettings> startggSettings, IOptionsMonitor<JwtSettings> jwtSettings, IHttpContextAccessor httpContextAccessor)
         {
@@ -31,7 +35,7 @@ namespace Rewardergg.Infrastructure.Services
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<OauthResponseDto> AuthenticateWithOauth(string code)
+        public async Task<OauthResponseDto> GetTokenWithAuthorizationCodeAsync(string code, bool isRefresh = false)
         {
             var postData = new
             {
@@ -45,7 +49,7 @@ namespace Rewardergg.Infrastructure.Services
 
             var json = JsonConvert.SerializeObject(postData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PostAsync(_oauthEndpoint, content);
+            var response = await _httpClient.PostAsync(isRefresh ? _oauthRefreshEndpoint : _oauthEndpoint, content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -79,10 +83,12 @@ namespace Rewardergg.Infrastructure.Services
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key!));
             var credenciales = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+            expirationTime = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes);
+
             var tokenDescription = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.Add(_jwtSettings.ExpireTime),
+                Expires = expirationTime,
                 SigningCredentials = credenciales
             };
 
@@ -97,6 +103,11 @@ namespace Rewardergg.Infrastructure.Services
                     .FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value;
 
             return username!;
+        }
+
+        public DateTime GetJwtExpirationTime()
+        {
+            return expirationTime;
         }
     }
 }

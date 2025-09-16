@@ -166,6 +166,9 @@ namespace Rewardergg.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("Slug")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -192,6 +195,9 @@ namespace Rewardergg.Infrastructure.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("LastSyncedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
@@ -201,9 +207,36 @@ namespace Rewardergg.Infrastructure.Migrations
                     b.Property<string>("Roles")
                         .HasColumnType("text");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Rewardergg.Domain.UserEnrollment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EnrollmentDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("EventId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserEnrollments");
                 });
 
             modelBuilder.Entity("Rewardergg.Domain.UserToken", b =>
@@ -216,8 +249,12 @@ namespace Rewardergg.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("ExpiresAt")
-                        .HasColumnType("integer");
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasColumnType("timestamptz");
+
+                    b.Property<string>("PlatformRefreshToken")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("RefreshToken")
                         .IsRequired()
@@ -300,6 +337,25 @@ namespace Rewardergg.Infrastructure.Migrations
                     b.Navigation("Loser");
 
                     b.Navigation("Winner");
+                });
+
+            modelBuilder.Entity("Rewardergg.Domain.UserEnrollment", b =>
+                {
+                    b.HasOne("Rewardergg.Domain.Event", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Rewardergg.Domain.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Rewardergg.Domain.UserToken", b =>

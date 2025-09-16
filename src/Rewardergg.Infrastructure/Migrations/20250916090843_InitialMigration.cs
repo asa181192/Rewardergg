@@ -33,6 +33,7 @@ namespace Rewardergg.Infrastructure.Migrations
                     StartDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     EndDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Category = table.Column<string>(type: "text", nullable: true),
+                    Slug = table.Column<string>(type: "text", nullable: true),
                     IsFinished = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
@@ -49,9 +50,11 @@ namespace Rewardergg.Infrastructure.Migrations
                     Email = table.Column<string>(type: "text", nullable: true),
                     GamerTag = table.Column<string>(type: "text", nullable: true),
                     Discriminator = table.Column<string>(type: "text", nullable: true),
+                    UserId = table.Column<int>(type: "integer", nullable: false),
                     Points = table.Column<int>(type: "integer", nullable: false),
                     IsActive = table.Column<bool>(type: "boolean", nullable: false),
-                    Roles = table.Column<string>(type: "text", nullable: true)
+                    Roles = table.Column<string>(type: "text", nullable: true),
+                    LastSyncedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -109,8 +112,8 @@ namespace Rewardergg.Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uuid", nullable: false),
                     AccessToken = table.Column<string>(type: "text", nullable: false),
                     RefreshToken = table.Column<string>(type: "text", nullable: false),
-                    ExpiresAt = table.Column<int>(type: "integer", nullable: false),
-                    CreatedAt = table.Column<int>(type: "integer", nullable: false)
+                    PlatformRefreshToken = table.Column<string>(type: "text", nullable: false),
+                    ExpiresAt = table.Column<DateTimeOffset>(type: "timestamptz", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -183,6 +186,32 @@ namespace Rewardergg.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserEnrollments",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EventId = table.Column<Guid>(type: "uuid", nullable: false),
+                    EnrollmentDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserEnrollments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserEnrollments_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserEnrollments_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_EventParticipants_UserId",
                 table: "EventParticipants",
@@ -214,6 +243,16 @@ namespace Rewardergg.Infrastructure.Migrations
                 column: "WinnerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_UserEnrollments_EventId",
+                table: "UserEnrollments",
+                column: "EventId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserEnrollments_UserId",
+                table: "UserEnrollments",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserToken_UserId",
                 table: "UserToken",
                 column: "UserId",
@@ -234,6 +273,9 @@ namespace Rewardergg.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "RewardCatalog");
+
+            migrationBuilder.DropTable(
+                name: "UserEnrollments");
 
             migrationBuilder.DropTable(
                 name: "UserToken");
