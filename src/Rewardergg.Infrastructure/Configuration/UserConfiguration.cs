@@ -24,7 +24,7 @@ namespace Rewardergg.Infrastructure.Configuration
             // Configure Roles
             var rolesConverter = new ValueConverter<ICollection<string>, string>(
                 roles => string.Join(",", roles),         // Serialize collection to a single string
-                roles => roles.Split(',', StringSplitOptions.None).ToList() // Deserialize string back to collection
+                roles => roles.Split(',', StringSplitOptions.RemoveEmptyEntries).ToList() // Deserialize string back to collection
             );
 
             var rolesComparer = new ValueComparer<ICollection<string>>(

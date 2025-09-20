@@ -15,7 +15,7 @@ namespace Rewardergg.Infrastructure.Configuration
         {
             builder.HasKey(e => e.Id);
 
-            builder.HasMany(s => s.Sets)
+            builder.HasMany(s => s.Matches)
                 .WithOne(e => e.Event)
                 .HasForeignKey(e => e.EventId);
         }

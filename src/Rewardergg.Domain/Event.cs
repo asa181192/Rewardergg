@@ -12,7 +12,6 @@ namespace Rewardergg.Domain
 
         public Tournament? Tournament { get; set; }
 
-        public ICollection<MatchResult>? Sets { get; set; }
-
+        public ICollection<Match>? Matches { get; set; }
     }
 }

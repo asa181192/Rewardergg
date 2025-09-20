@@ -156,60 +156,60 @@ namespace Rewardergg.Application.Services
 
         public async Task SyncUserDataAsync(Guid userId, CancellationToken cancellationToken)
         {
-            var user = await _appDbContext.Users
-                .Include(u => u.EventParticipations)
-                .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+            //var user = await _appDbContext.Users
+            //    .Include(u => u.EventParticipations)
+            //    .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
-            if (user == null)
-                throw new Exception("User not found.");
+            //if (user == null)
+            //    throw new Exception("User not found.");
 
-            var oauthToken = await _appDbContext.UserToken
-                .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
+            //var oauthToken = await _appDbContext.UserToken
+            //    .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);
 
-            if (oauthToken == null)
-                throw new Exception("OAuth token not found.");
+            //if (oauthToken == null)
+            //    throw new Exception("OAuth token not found.");
 
-            var events = await _appDbContext.UserEnrollments
-                .Where(ue => ue.UserId == userId)
-                .Include(ue => ue.Event)
-                .ThenInclude(e => e.Tournament)
-                .ToListAsync(cancellationToken);
+            //var events = await _appDbContext.UserEnrollments
+            //    .Where(ue => ue.UserId == userId)
+            //    .Include(ue => ue.Event)
+            //    .ThenInclude(e => e.Tournament)
+            //    .ToListAsync(cancellationToken);
 
-            foreach (var ev in events)
-            {
-                // Call Start.gg for entrant standing
-                var standing = await _startggService.GetEntrantStandingAsync(
-                    oauthToken.AccessToken,
-                    ev.Event.Id.ToString(),
-                    user.UserId, // or userId if that's the correct identifier for Start.gg
-                    cancellationToken);
+            //foreach (var ev in events)
+            //{
+            //    // Call Start.gg for entrant standing
+            //    var standing = await _startggService.GetEntrantStandingAsync(
+            //        oauthToken.AccessToken,
+            //        ev.Event.Id.ToString(),
+            //        user.UserId, // or userId if that's the correct identifier for Start.gg
+            //        cancellationToken);
 
-                //if (standing != null && standing.IsFinal && standing.Placement.HasValue)
-                //{
-                //    var eventUser = await _appDbContext.EventParticipants
-                //        .FirstOrDefaultAsync(ep => ep.EventId == ev.Event.Id && ep.UserId == userId, cancellationToken);
+            //    //if (standing != null && standing.IsFinal && standing.Placement.HasValue)
+            //    //{
+            //    //    var eventUser = await _appDbContext.EventParticipants
+            //    //        .FirstOrDefaultAsync(ep => ep.EventId == ev.Event.Id && ep.UserId == userId, cancellationToken);
 
-                //    if (eventUser == null)
-                //    {
-                //        eventUser = new EventUser
-                //        {
-                //            EventId = ev.Event.Id,
-                //            UserId = userId,
-                //            Placement = standing.Placement.Value,
-                //            TotalWins = 0,
-                //            TotalLosses = 0
-                //        };
-                //        await _appDbContext.EventParticipants.AddAsync(eventUser, cancellationToken);
-                //    }
-                //    else
-                //    {
-                //        eventUser.Placement = standing.Placement.Value;
-                //        _appDbContext.EventParticipants.Update(eventUser);
-                //    }
-                //}
-            }
+            //    //    if (eventUser == null)
+            //    //    {
+            //    //        eventUser = new EventUser
+            //    //        {
+            //    //            EventId = ev.Event.Id,
+            //    //            UserId = userId,
+            //    //            Placement = standing.Placement.Value,
+            //    //            TotalWins = 0,
+            //    //            TotalLosses = 0
+            //    //        };
+            //    //        await _appDbContext.EventParticipants.AddAsync(eventUser, cancellationToken);
+            //    //    }
+            //    //    else
+            //    //    {
+            //    //        eventUser.Placement = standing.Placement.Value;
+            //    //        _appDbContext.EventParticipants.Update(eventUser);
+            //    //    }
+            //    //}
+            //}
 
-            await _appDbContext.SaveChangesAsync(cancellationToken);
+            //await _appDbContext.SaveChangesAsync(cancellationToken);
         }
 
     }

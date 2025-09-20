@@ -17,12 +17,11 @@ namespace Rewardergg.Infrastructure.Persitence
         public DbSet<User> Users { get; set; }
         public DbSet<UserToken> UserToken { get; set; }
         public DbSet<RewardCatalog> RewardCatalog { get; set; }
-        public DbSet<LeaderBoard> LeaderBoard { get; set; }
         public DbSet<Tournament> Tournaments { get; set; }
         public DbSet<Event> Events { get; set; }
         public DbSet<EventUser> EventParticipants { get; set; }
-        public DbSet<MatchResult> MatchResults { get; set; }
-        public DbSet<UserEnrollment> UserEnrollments { get; set; }
+        public DbSet<Match> Matches { get; set; }
+        public DbSet<MatchParticipant> MatchParticipants { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,8 +29,8 @@ namespace Rewardergg.Infrastructure.Persitence
 
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new TournamentConfiguration());
-            modelBuilder.ApplyConfiguration(new MatchResultConfiguration());
-            modelBuilder.ApplyConfiguration(new LeaderBoardConfiguration());
+            modelBuilder.ApplyConfiguration(new MatchConfiguration());
+            modelBuilder.ApplyConfiguration(new MatchParticipantConfiguration());
             modelBuilder.ApplyConfiguration(new EventUserConfiguration());
             modelBuilder.ApplyConfiguration(new EventConfiguration());
 
